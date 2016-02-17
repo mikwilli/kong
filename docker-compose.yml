@@ -4,6 +4,8 @@ services:
     image: mashape/cassandra
     networks:
       - cassandra
+    environment:
+      - SEED=172.16.7.200
     ports:
       - "9042:9042"
 
