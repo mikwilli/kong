@@ -6,6 +6,18 @@ services:
       - "9042:9042"
     networks:
       - cassandra
+  cassandra1:
+    image: mashape/cassandra
+    links:
+      - cassandra:seed
+    environment:
+      CASSANDRA_SEEDS: seed
+  cassandra2:
+    image: mashape/cassandra
+    links:
+      - cassandra:seed
+    environment:
+      CASSANDRA_SEEDS: seed
 
   kong:
     image: mashape/kong
@@ -17,6 +29,11 @@ services:
       - "8001:8001"
       - "7946:7946"
       - "7946:7946/udp"
+    command: ["/bin/bash", "-c", " while ! nc cassandra 9042; do sleep 5; done && kong start && tail -f /usr/local/kong/logs/error.log"]
+  kong2:
+    image: mashape/kong
+    networks:
+      - cassandra
     command: ["/bin/bash", "-c", " while ! nc cassandra 9042; do sleep 5; done && kong start && tail -f /usr/local/kong/logs/error.log"]
 
   ui:
